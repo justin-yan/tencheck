@@ -56,6 +56,7 @@ quote-style = "double"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
+ignore = ["F722"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["tencheck"]

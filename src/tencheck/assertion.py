@@ -13,5 +13,5 @@ def layer_object_assertion(layers: list[nn.Module], seed: Optional[int] = None) 
     for layer in layers:
         in_tens = input_gen(layer, seed)
         out = layer.forward(**in_tens)
-        l = trivial_loss(out)
-        l.backward()
+        loss = trivial_loss(out)
+        loss.backward()

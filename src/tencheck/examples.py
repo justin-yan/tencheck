@@ -4,7 +4,7 @@ from jaxtyping import Float
 
 
 class SimpleLinReluModule(nn.Module):
-    def __init__(self, out_features: int):
+    def __init__(self, out_features: int) -> None:
         super(SimpleLinReluModule, self).__init__()
         self.linear = nn.Linear(32, out_features)
         self.relu = nn.ReLU()
@@ -16,7 +16,7 @@ class SimpleLinReluModule(nn.Module):
 
 
 class BrokenModule(nn.Module):
-    def __init__(self):
+    def __init__(self) -> None:
         super(BrokenModule, self).__init__()
         self.linear = nn.Linear(32, 4)
         self.relu = nn.ReLU()
@@ -24,5 +24,5 @@ class BrokenModule(nn.Module):
     def forward(self, x: Float[torch.Tensor, "B 32"]) -> Float[torch.Tensor, "B 4"]:
         x = self.linear(x)
         raise Exception("Module is broken")
-        x = self.relu(x)
+        x = self.relu(x)  # type: ignore[unreachable]
         return x
