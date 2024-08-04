@@ -5,16 +5,34 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "tencheck"
 version = "0.0.1"
-requires-python = ">=3.8"
+authors = [
+    { name="Justin Yan", email="justin@iomorphic.com" }
+]
+description = "A library for pytorch layer testing."
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+]
 dependencies = [
     ######
     ### Custom Dependencies Section Begin
     ######
-
+    "torch>2,<2.4",
+    "jaxtyping",
+    "numpy",
     ######
     ### Custom Dependencies Section End
     ######
 ]
+
+[project.urls]
+"Homepage" = "https://github.com/justin-yan/tencheck"
 
 [tool.setuptools]
 zip-safe = false
@@ -43,7 +61,7 @@ select = ["E", "F", "W", "I"]
 known-first-party = ["tencheck"]
 
 [tool.pytest.ini_options]
-addopts = "-ra -q --doctest-modules"
+addopts = "-ra -q --doctest-modules --jaxtyping-packages=tencheck.examples,beartype.beartype"
 
 [tool.mypy]
 mypy_path = "src"
