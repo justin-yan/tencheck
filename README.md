@@ -21,28 +21,10 @@ The following requirements need to be met for `tencheck` to work:
 - The `.forward()` method is annotated with [jaxtyping](https://github.com/patrick-kidger/jaxtyping).
 
 
-## Assertion
-
-The assertion modality is simple:
-
-- For each layer:
-  - Introspect the arguments of the forward pass and automatically generate matching tensors.
-  - Run a forward and backward pass with a trivial loss.
-  - Assert properties based on the resultant outputs and tensor states.
-
-
-## Properties
-
-- Smoke-test: The layer runs forward and backward with a trivial loss without error.
-- Shape-check: Turn on [jaxtyping's pytest beartype integration](https://docs.kidger.site/jaxtyping/api/runtime-type-checking/#pytest-hook) to shape check your outputs and intermediates.
-
-
 ## Backlog
 
-- Represent properties explicitly.
-  - Analysis modality.
-- Profiling modality and properties.
-- Scaling input sizes to produce performance curves.
+- For profiling, use a grid of input sizes to generate performance curves.
+- Pick a flop counter and use for profiling
 - Tensor container types include more options like dataclasses.
 - Auto-generate simple hyperparameters for layer instantiation.
 - Refine dtype mapping and coherence.

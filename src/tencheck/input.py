@@ -38,7 +38,7 @@ class TensorSpec:
     dtype: torch.dtype
 
 
-def input_gen(layer: nn.Module, seed: Optional[int] = None) -> dict[str, Tensor]:
+def input_gen(layer: nn.Module, seed: Optional[int] = None, device: str | torch.device = "cpu") -> dict[str, Tensor]:
     """
     For a given layer that is type annotated with jaxtyping, produce a map of mock tensors that can be used like so:
 
@@ -73,9 +73,9 @@ def input_gen(layer: nn.Module, seed: Optional[int] = None) -> dict[str, Tensor]
     for name, spec in tensor_specs.items():
         match spec.dtype:
             case torch.float32:
-                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device="cpu", low=-1, high=1)
+                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device=device, low=-1, high=1)
             case torch.int32:
-                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device="cpu", low=-10, high=10)
+                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device=device, low=-10, high=10)
             case _:
                 logging.error(spec)
                 raise NotImplementedError("Don't yet handle these dtypes")
