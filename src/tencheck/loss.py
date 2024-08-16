@@ -1,7 +1,7 @@
 import torch
 from torch import Tensor
 
-TensorContainerTypes = Tensor | list | set | tuple | dict
+from tencheck.type import TensorContainerTypes
 
 
 def flatten_tensors(tct: TensorContainerTypes) -> list[Tensor]:

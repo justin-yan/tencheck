@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tencheck"
-version = "0.0.2"
+version = "0.0.3"
 authors = [
     { name="Justin Yan", email="justin@iomorphic.com" }
 ]
@@ -26,6 +26,7 @@ dependencies = [
     "torch>2,<2.4",
     "jaxtyping",
     "numpy",
+    "graphviz",
     ######
     ### Custom Dependencies Section End
     ######

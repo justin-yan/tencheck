@@ -65,3 +65,14 @@ class MistypedModule(nn.Module):
         x = self.linear(x)
         x = self.relu(x)
         return x
+
+
+class HardcodedDeviceModule(nn.Module):
+    def __init__(self, out_features: int) -> None:
+        super(HardcodedDeviceModule, self).__init__()
+        self.linear = nn.Linear(32, out_features)
+
+    def forward(self, x: Float[torch.Tensor, "B 32"]) -> Float[torch.Tensor, "B O"]:
+        x = self.linear(x)
+        x = x + torch.randn(1, device="cpu")
+        return x
