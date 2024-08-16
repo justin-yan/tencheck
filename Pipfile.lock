@@ -294,7 +294,6 @@
         },
         "tencheck": {
             "editable": true,
-            "markers": "python_version >= '3.11'",
             "path": "."
         },
         "torch": {
@@ -375,7 +374,6 @@
                 "sha256:5301a14f2a9a5540fe47ec6d34d758e9cd8331d36c4760fc7a5499ab86310089"
             ],
             "index": "pypi",
-            "markers": "python_full_version >= '3.8.0'",
             "version": "==0.18.5"
         },
         "build": {
@@ -384,7 +382,6 @@
                 "sha256:75e10f767a433d9a86e50d83f418e83efc18ede923ee5ff7df93b6cb0306c5d4"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==1.2.1"
         },
         "certifi": {
@@ -640,7 +637,6 @@
                 "sha256:fd21f6ae3f08b41004dfb433fa895d858f3f5979e7762d052b12aef444e29afc"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==7.6.1"
         },
         "cryptography": {
@@ -690,7 +686,6 @@
                 "sha256:9422adbac4b2104f6cf92dc6604b5c9df975efc08ffc7145ecc39bc617243835"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==6.111.1"
         },
         "idna": {
@@ -812,7 +807,6 @@
                 "sha256:fca4a60e1dd9fd0193ae0067eaeeb962f2d79e0d9f0f66223a0682f26ffcc809"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==1.11.1"
         },
         "mypy-extensions": {
@@ -898,7 +892,6 @@
                 "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==8.3.2"
         },
         "readme-renderer": {
@@ -963,7 +956,6 @@
                 "sha256:f2089267692696aba342179471831a085043f218706e642564812145df8b8d0d"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
             "version": "==0.6.0"
         },
         "secretstorage": {
@@ -987,7 +979,6 @@
                 "sha256:9aa0825139c02b3434d913545c7b847a21c835e11597f5255842d457da2322db"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==5.1.1"
         },
         "typing-extensions": {
