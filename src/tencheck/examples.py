@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import torch
 import torch.nn as nn
 from jaxtyping import Float
@@ -13,6 +15,24 @@ class SimpleLinReluModule(nn.Module):
         x = self.linear(x)
         x = self.relu(x)
         return x
+
+
+@dataclass
+class Features:
+    one: Float[torch.Tensor, "B 32"]
+    two: Float[torch.Tensor, "C D"]
+
+
+class DataclassLinReluModule(nn.Module):
+    def __init__(self, out_features: int) -> None:
+        super(DataclassLinReluModule, self).__init__()
+        self.linear = nn.Linear(32, out_features)
+        self.relu = nn.ReLU()
+
+    def forward(self, x: Features) -> Float[torch.Tensor, "B O"]:
+        y = self.linear(x.one)
+        y = self.relu(y)
+        return y
 
 
 class CasedLinReluModule(nn.Module):
