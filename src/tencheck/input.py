@@ -65,12 +65,16 @@ def _extract_dim_names(s: inspect.Signature) -> list[str]:
             # A jaxtyped tensor can be one of `_NamedDim`, `_FixedDim`, `_NamedVariadicDim`, or `_SymbolicDim`
             for dim in obj_type.dims:
                 match dim:
+                    case object() if type(dim) is object:
+                        dim_names.append("ellipsis")
                     case _NamedDim(nm, _, _):
                         dim_names.append(nm)
                     case _FixedDim(_, _):
                         pass
-                    case _NamedVariadicDim() | _SymbolicDim() | _:
+                    case _NamedVariadicDim() | _SymbolicDim():
                         raise NotImplementedError("Don't yet handle these dimension cases")
+                    case _:
+                        raise Exception("Unknown Type")
         elif dataclasses.is_dataclass(obj_type):
             dim_names.extend(_extract_dim_names(inspect.signature(obj_type)))
         else:
@@ -92,11 +96,12 @@ def _resolve_signature(s: inspect.Signature, assigned_dimensions: dict[str, int]
             # A jaxtyped tensor can be one of `_NamedDim`, `_FixedDim`, `_NamedVariadicDim`, or `_SymbolicDim`
             for dim in obj_type.dims:
                 match dim:
+                    case object() if type(dim) is object:
+                        shape.append(assigned_dimensions["ellipsis"])
                     case _NamedDim(nm, _, _):
-                        sz = assigned_dimensions[nm]
-                        shape.append(sz)
+                        shape.append(assigned_dimensions[nm])
                     case _FixedDim(sz, _):
-                        shape.append(sz)
+                        shape.append(sz)  # type: ignore[arg-type]
                     case _NamedVariadicDim() | _SymbolicDim() | _:
                         raise NotImplementedError("Don't yet handle these dimension cases")
 
