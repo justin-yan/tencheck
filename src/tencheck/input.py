@@ -1,8 +1,8 @@
+import dataclasses
 import inspect
 import logging
 import random
-from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 import torch
 import torch.nn as nn
@@ -32,12 +32,6 @@ dtype_mapping = {
 }
 
 
-@dataclass
-class TensorSpec:
-    shape: tuple[int, ...]
-    dtype: torch.dtype
-
-
 def input_gen(layer: nn.Module, seed: Optional[int] = None, device: str | torch.device = "cpu") -> dict[str, Tensor]:
     """
     For a given layer that is type annotated with jaxtyping, produce a map of mock tensors that can be used like so:
@@ -45,40 +39,89 @@ def input_gen(layer: nn.Module, seed: Optional[int] = None, device: str | torch.
     in_tens = input_gen(layer)
     layer.forward(**in_tens)
     """
+    signature = inspect.signature(layer.forward)
+    dim_names = _extract_dim_names(signature)
+
     if seed:
         torch.manual_seed(seed)
         random.seed(seed)
 
-    signature = inspect.signature(layer.forward)
-    tensor_specs: dict[str, TensorSpec] = {}  # parameter to shape
-    # Across all of the parameters, we'll have a mix of `_NamedDim`, `_FixedDim`, `_NamedVariadicDim`, or `_SymbolicDim`
-    # We want to pick concrete dimensions for everything that isn't fixed,
-    #   and then we want to generate tensors for everything.
-    dimension_name_map: dict[str, int] = {}
-    for name, param_obj in signature.parameters.items():
-        shape: list[int] = []
-        for dim in param_obj.annotation.dims:
-            match dim:
-                case _NamedDim(nm, _, _):
-                    sz = dimension_name_map.setdefault(nm, random.randint(4, 64))
-                    shape.append(sz)
-                case _FixedDim(sz, _):
-                    shape.append(sz)
-                case _NamedVariadicDim() | _SymbolicDim() | _:
-                    raise NotImplementedError("Don't yet handle these dimension cases")
-        dt = dtype_mapping[param_obj.annotation.dtypes[0]]
-        tensor_specs[name] = TensorSpec(tuple(shape), dt)
+    assigned_dimensions = {}
+    for dim in dim_names:
+        if hasattr(layer, dim) and isinstance(getattr(layer, dim), int):
+            assigned_dimensions[dim] = getattr(layer, dim)
+        else:
+            assigned_dimensions[dim] = random.randint(4, 16)
 
-    output = {}
-    for name, spec in tensor_specs.items():
-        match spec.dtype:
-            case torch.float32:
-                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device=device, low=-1, high=1)
-            case torch.int32:
-                mock_ten = make_tensor(spec.shape, dtype=spec.dtype, device=device, low=-10, high=10)
-            case _:
-                logging.error(spec)
-                raise NotImplementedError("Don't yet handle these dtypes")
-        output[name] = mock_ten
+    return _resolve_signature(signature, assigned_dimensions, device)
 
-    return output
+
+def _extract_dim_names(s: inspect.Signature) -> list[str]:
+    dim_names: list[str] = []
+    for name, param_obj in s.parameters.items():
+        obj_type = param_obj.annotation
+
+        if hasattr(obj_type, "dims"):  # This is a very imperfect check for jaxtyped torch tensors
+            # A jaxtyped tensor can be one of `_NamedDim`, `_FixedDim`, `_NamedVariadicDim`, or `_SymbolicDim`
+            for dim in obj_type.dims:
+                match dim:
+                    case object() if type(dim) is object:
+                        dim_names.append("ellipsis")
+                    case _NamedDim(nm, _, _):
+                        dim_names.append(nm)
+                    case _FixedDim(_, _):
+                        pass
+                    case _NamedVariadicDim() | _SymbolicDim():
+                        raise NotImplementedError("Don't yet handle these dimension cases")
+                    case _:
+                        raise Exception("Unknown Type")
+        elif dataclasses.is_dataclass(obj_type):
+            dim_names.extend(_extract_dim_names(inspect.signature(obj_type)))
+        else:
+            raise Exception("Unhandled Type")
+
+    return dim_names
+
+
+def _resolve_signature(s: inspect.Signature, assigned_dimensions: dict[str, int], device: str | torch.device) -> dict[str, Any]:
+    resolved_kwargs: dict[str, Any] = {}
+
+    for name, param_obj in s.parameters.items():
+        obj_type = param_obj.annotation
+
+        if hasattr(obj_type, "dims"):  # This is a very imperfect check for jaxtyped torch tensors
+            dtype = dtype_mapping[param_obj.annotation.dtypes[0]]
+            shape: list[int] = []
+
+            # A jaxtyped tensor can be one of `_NamedDim`, `_FixedDim`, `_NamedVariadicDim`, or `_SymbolicDim`
+            for dim in obj_type.dims:
+                match dim:
+                    case object() if type(dim) is object:
+                        shape.append(assigned_dimensions["ellipsis"])
+                    case _NamedDim(nm, _, _):
+                        shape.append(assigned_dimensions[nm])
+                    case _FixedDim(sz, _):
+                        shape.append(sz)  # type: ignore[arg-type]
+                    case _NamedVariadicDim() | _SymbolicDim() | _:
+                        raise NotImplementedError("Don't yet handle these dimension cases")
+
+            resolved_kwargs[name] = _make_tensor(shape, dtype, device)
+        elif dataclasses.is_dataclass(obj_type):
+            recursive_kwargs = _resolve_signature(inspect.signature(obj_type), assigned_dimensions, device)
+            resolved_kwargs[name] = obj_type(**recursive_kwargs)
+        else:
+            raise Exception("Unhandled Type")
+
+    return resolved_kwargs
+
+
+def _make_tensor(shape: list[int], dtype: torch.dtype, device: str | torch.device) -> torch.Tensor:
+    match dtype:
+        case torch.float32:
+            mock_ten = make_tensor(tuple(shape), dtype=dtype, device=device, low=-1, high=1)
+        case torch.int32:
+            mock_ten = make_tensor(tuple(shape), dtype=dtype, device=device, low=-10, high=10)
+        case _:
+            logging.error(dtype)
+            raise NotImplementedError("Don't yet handle these dtypes")
+    return mock_ten
