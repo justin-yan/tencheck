@@ -121,6 +121,8 @@ def _make_tensor(shape: list[int], dtype: torch.dtype, device: str | torch.devic
             mock_ten = make_tensor(tuple(shape), dtype=dtype, device=device, low=-1, high=1)
         case torch.int32:
             mock_ten = make_tensor(tuple(shape), dtype=dtype, device=device, low=-10, high=10)
+        case torch.bool:
+            mock_ten = make_tensor(tuple(shape), dtype=dtype, device=device)
         case _:
             logging.error(dtype)
             raise NotImplementedError("Don't yet handle these dtypes")

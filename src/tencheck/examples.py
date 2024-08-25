@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import torch
 import torch.nn as nn
-from jaxtyping import Float
+from jaxtyping import Bool, Float
 
 
 class SimpleLinReluModule(nn.Module):
@@ -38,6 +38,19 @@ class VariadicLinReluModule(nn.Module):
         self.relu = nn.ReLU()
 
     def forward(self, x: Float[torch.Tensor, "... 32"]) -> Float[torch.Tensor, "... O"]:
+        x = self.linear(x)
+        x = self.relu(x)
+        return x
+
+
+class BoolModule(nn.Module):
+    def __init__(self, out_features: int) -> None:
+        super(BoolModule, self).__init__()
+        self.linear = nn.Linear(32, out_features)
+        self.relu = nn.ReLU()
+
+    def forward(self, x: Float[torch.Tensor, "B 32"], mask: Bool[torch.Tensor, "B"]) -> Float[torch.Tensor, "B O"]:
+        x = x * mask.unsqueeze(1)
         x = self.linear(x)
         x = self.relu(x)
         return x
