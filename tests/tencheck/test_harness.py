@@ -6,7 +6,9 @@ from tencheck.examples import (
     BrokenModule,
     CasedLinReluModule,
     HardcodedDeviceModule,
+    ListLinReluModule,
     MistypedModule,
+    OptionalSimpleLinReluModule,
     SimpleLinReluModule,
     UnusedParamsModule,
 )
@@ -15,6 +17,8 @@ from tencheck.harness import _single_layer_assert_all, check_layers
 
 def test_single_layer():
     _single_layer_assert_all(SimpleLinReluModule(5))
+    _single_layer_assert_all(OptionalSimpleLinReluModule(5))
+    _single_layer_assert_all(ListLinReluModule(5))
 
     with pytest.raises(Exception, match="Module is broken"):
         _single_layer_assert_all(BrokenModule())
