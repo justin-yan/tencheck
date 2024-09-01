@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import List, Optional
 
 import torch
 import torch.nn as nn
@@ -15,6 +16,33 @@ class SimpleLinReluModule(nn.Module):
         x = self.linear(x)
         x = self.relu(x)
         return x
+
+
+class OptionalSimpleLinReluModule(nn.Module):
+    def __init__(self, out_features: int) -> None:
+        super(OptionalSimpleLinReluModule, self).__init__()
+        self.linear = nn.Linear(32, out_features)
+        self.relu = nn.ReLU()
+
+    def forward(self, x: Optional[Float[torch.Tensor, "B 32"]]) -> Float[torch.Tensor, "B O"]:
+        assert x is not None
+        y = self.linear(x)
+        y = self.relu(y)
+        return y
+
+
+class ListLinReluModule(nn.Module):
+    def __init__(self, out_features: int) -> None:
+        super(ListLinReluModule, self).__init__()
+        self.linear = nn.Linear(32, out_features)
+        self.relu = nn.ReLU()
+
+    def forward(self, x: list[Float[torch.Tensor, "B 32"]], y: List[Float[torch.Tensor, "C 32"]]) -> Float[torch.Tensor, "B O"]:
+        assert len(x) > 0
+        z = x[0]
+        z = self.linear(z)
+        z = self.relu(z)
+        return z
 
 
 class SpecifiedLinReluModule(nn.Module):
@@ -59,7 +87,7 @@ class BoolModule(nn.Module):
 @dataclass
 class Features:
     one: Float[torch.Tensor, "B 32"]
-    two: Float[torch.Tensor, "C D"]
+    two: list[Float[torch.Tensor, "C D"]]
 
 
 class DataclassLinReluModule(nn.Module):
