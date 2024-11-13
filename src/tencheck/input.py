@@ -88,7 +88,7 @@ def _extract_dim_names_object_type(obj_type: Any) -> set[str]:
     elif hasattr(obj_type, "__origin__") and obj_type.__origin__ is list:
         dim_names |= _extract_dim_names_object_type(obj_type.__args__[0])
     elif dataclasses.is_dataclass(obj_type):
-        dim_names |= _extract_dim_names(inspect.signature(obj_type))
+        dim_names |= _extract_dim_names(inspect.signature(obj_type))  # type: ignore
     else:
         raise Exception("Unhandled Type")
 
@@ -131,8 +131,8 @@ def _resolve_obj_type(obj_type: Any, assigned_dimensions: dict[str, int], device
     elif hasattr(obj_type, "__origin__") and obj_type.__origin__ is list:
         return [_resolve_obj_type(obj_type.__args__[0], assigned_dimensions, device) for i in range(2)]
     elif dataclasses.is_dataclass(obj_type):
-        recursive_kwargs = _resolve_signature(inspect.signature(obj_type), assigned_dimensions, device)
-        return obj_type(**recursive_kwargs)
+        recursive_kwargs = _resolve_signature(inspect.signature(obj_type), assigned_dimensions, device)  # type: ignore
+        return obj_type(**recursive_kwargs)  # type: ignore
     else:
         raise Exception("Unhandled Type")
 

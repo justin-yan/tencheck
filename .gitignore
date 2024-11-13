@@ -6,7 +6,6 @@ __pycache__/
 .hypothesis
 .pytest_cache
 .coverage
-.python-version
 *.egg-info*
 dist/
 .venv
