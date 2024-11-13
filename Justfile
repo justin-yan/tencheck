@@ -14,13 +14,13 @@ TEST_FOLDER:='tests'
     echo "PR is successful!"
 
 @build:
-    uv run python -m build
+    uv build
 
 @register:
     git diff --name-only HEAD^1 HEAD -G"^version" "pyproject.toml" | uniq | xargs -I {} sh -c 'just _register'
 
 @_register: init build
-    uv run twine upload -u $PYPI_USERNAME -p $PYPI_PASSWORD dist/*
+    uv publish -u $PYPI_USERNAME -p $PYPI_PASSWORD dist/*
 
 @init:
     [ -f uv.lock ] && echo "Lockfile already exists" || uv lock
