@@ -32,6 +32,16 @@ dependencies = [
     ######
 ]
 
+[dependency-groups]
+dev = [
+    "pytest>5",
+    "hypothesis>5",
+    "coverage>5",
+    "ruff>0.2.1",
+    "mypy>1.2",
+    "beartype"
+]
+
 [project.urls]
 "Homepage" = "https://github.com/justin-yan/tencheck"
 
