@@ -10,7 +10,7 @@ authors = [
 ]
 description = "A library for pytorch layer testing."
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = "==3.11.4"
 classifiers = [
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -34,6 +34,18 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/justin-yan/tencheck"
+
+[dependency-groups]
+dev = [
+    "pytest>5",
+    "hypothesis>5",
+    "coverage>5",
+    "ruff>0.2.1",
+    "mypy>1.2",
+    "build>0.8",
+    "twine>3",
+    "beartype"
+]
 
 [tool.setuptools]
 zip-safe = false
