@@ -1,5 +1,5 @@
 import time
-from typing import Optional, Type
+from typing import Optional
 
 import torch
 from torch import nn as nn
@@ -11,7 +11,7 @@ from tencheck.torchviz import make_dot  # type: ignore
 from tencheck.type import CaseDefined, LayerStats, TensorContainerTypes
 
 
-def check_layers(layers: list[nn.Module | Type[CaseDefined]], seed: Optional[int] = None) -> None:
+def check_layers(layers: list[nn.Module | type[CaseDefined]], seed: Optional[int] = None) -> None:
     """
     This method receives a *concrete* list of layer objects, and asserts the relevant properties.
     """
