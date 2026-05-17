@@ -34,13 +34,17 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "pip",
     "pytest>5",
     "hypothesis>5",
     "coverage>5",
     "ruff>0.2.1",
     "mypy>1.2",
-    "beartype"
+    "beartype",
 ]
+
+ [tool.uv]
+exclude-newer = "P14D"  # Exclude packages published in the past 14 days to avoid early updates
 
 [project.urls]
 "Homepage" = "https://github.com/justin-yan/tencheck"
@@ -66,14 +70,21 @@ target-version = "py311"
 quote-style = "double"
 
 [tool.ruff.lint]
-select = ["E", "F", "W", "I"]
+select = ["E", "F", "W", "I", "UP006", "NPY201", "T100", "DTZ"]
 ignore = ["F722", "F821"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["tencheck"]
 
 [tool.pytest.ini_options]
-addopts = "-ra -q --doctest-modules --jaxtyping-packages=tencheck.examples,beartype.beartype"
+addopts = "-ra -q --doctest-modules --jaxtyping-packages=tencheck.examples,beartype.beartype --durations=10 --setup-show --strict-markers -m 'not slow'"
+log_cli = true
+log_cli_level = "WARN"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(message)s (%(filename)s:%(lineno)s)"
+log_cli_date_format = "%Y-%m-%d %H:%M:%S"
+markers = [
+    "slow: Any test that executes too slowly for unit test loop",
+]
 
 [tool.mypy]
 mypy_path = "src"
