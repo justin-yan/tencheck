@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List, Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from torch import Tensor
 
@@ -7,7 +7,7 @@ from torch import Tensor
 @runtime_checkable
 class CaseDefined(Protocol):
     @property
-    def _tencheck_cases(self) -> List[Dict[str, Any]]:
+    def _tencheck_cases(self) -> list[dict[str, Any]]:
         raise NotImplementedError()
 
 

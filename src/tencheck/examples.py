@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Optional
+from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -37,7 +37,7 @@ class ListLinReluModule(nn.Module):
         self.linear = nn.Linear(32, out_features)
         self.relu = nn.ReLU()
 
-    def forward(self, x: list[Float[torch.Tensor, "B 32"]], y: List[Float[torch.Tensor, "C 32"]]) -> Float[torch.Tensor, "B O"]:
+    def forward(self, x: list[Float[torch.Tensor, "B 32"]], y: list[Float[torch.Tensor, "C 32"]]) -> Float[torch.Tensor, "B O"]:
         assert len(x) > 0
         z = x[0]
         z = self.linear(z)
